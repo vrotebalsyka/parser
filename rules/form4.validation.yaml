@@ -1,0 +1,21 @@
+version: 0.1.0
+rules:
+  - id: p01.fio.required
+    point: 1
+    severity: Error
+  - id: p04.passport.series-number.required
+    point: 4
+    severity: Critical
+  - id: p13.employment.gaps
+    point: 13
+    severity: Error
+  - id: p14.relatives.required-fields
+    point: 14
+    severity: Error
+  - id: p21.primary-template.required
+    point: 21
+    severity: Warning
+candidateMessage:
+  greeting: "Здравствуйте. При проверке анкеты необходимо уточнить/исправить следующие пункты:"
+  closing: "Просим внести исправления и направить обновлённую анкету."
+

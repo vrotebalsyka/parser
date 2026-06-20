@@ -22,7 +22,7 @@ After installation, the application must start from the desktop shortcut or Star
 
 ## MVP Workflow
 
-1. Select a completed questionnaire in DOCX or text-layer PDF.
+1. Select a completed questionnaire in DOCX, text-layer PDF, or Word 97-2003 DOC.
 2. Optionally attach candidate documents: PDF, JPG/JPEG, PNG, TIF/TIFF.
 3. Click "Проверить".
 4. Review issues grouped by Form 4 points 1-21.
@@ -41,6 +41,10 @@ pwsh scripts/build-installer.ps1
 ```
 
 The build scripts are offline at installer runtime. Package restore during development/build still requires the project dependencies to be available in the local NuGet cache or an approved internal feed.
+
+## Implementation Note
+
+The repository structure matches this README. The implementation now treats `.doc` as a legacy questionnaire input, but only after extension and Compound File Binary signature checks. DOC extraction is local and deterministic; it does not use Office, LibreOffice, COM automation, OCR, AI, network APIs, or a background service. If DOC table boundaries cannot be recovered confidently, the extractor returns warnings and falls back to conservative text extraction so the UI can route the case to manual review instead of crashing.
 
 ## Security Defaults
 
@@ -91,4 +95,3 @@ docs/
   TEST_PLAN.md
   OPEN_QUESTIONS.md
 ```
-

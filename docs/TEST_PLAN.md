@@ -30,7 +30,7 @@ Required fixture scenarios:
 13. Relative without address.
 14. Residence places with period gap.
 15. Missing phone/email.
-16. Legacy Word 97-2003 `.doc` is signature-checked and either parsed by a local library or rejected with a clear message when the parser is unavailable.
+16. Legacy Word 97-2003 `.doc` is signature-checked, requires a WordDocument stream, and is parsed locally without Office/LibreOffice.
 17. PDF without text layer produces manual review/no crash.
 18. 20-point form warns about legacy template.
 19. 21-point form is primary successful template.
@@ -70,6 +70,8 @@ Required fixture scenarios:
 - Secure temp cleanup.
 - Network disabled by default.
 - Word 97-2003 `.doc` signature handling.
+- DOCX/PDF/DOC spoofed-extension rejection.
+- DOC extractor fallback diagnostics when table boundaries are unavailable.
 - Oversized file rejection.
 - Path traversal filename sanitization.
 

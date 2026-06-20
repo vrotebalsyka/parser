@@ -9,7 +9,7 @@ The application is an assistant, not a decision-maker. A specialist must manuall
 ## User Scenario
 
 1. The specialist launches Form4Checker.
-2. The specialist selects a DOCX or text-layer PDF questionnaire.
+2. The specialist selects a DOCX, text-layer PDF, or Word 97-2003 DOC questionnaire.
 3. The specialist optionally attaches documents: passport, INN, SNILS, or other files.
 4. The specialist clicks "Проверить".
 5. The application shows issues grouped by Form 4 points.
@@ -25,7 +25,7 @@ Questionnaire:
 
 - `.docx` supported and primary.
 - `.pdf` supported only when it has a text layer.
-- Word 97-2003 `.doc` is a required legacy format, but it must be implemented only through deterministic local libraries and file signature checks. Office automation is forbidden.
+- Word 97-2003 `.doc` is a required legacy format and is parsed only through deterministic local code/library support and file signature checks. Office automation, LibreOffice conversion, macro execution, OCR, network APIs, and external AI are forbidden.
 
 Attached documents:
 
@@ -72,6 +72,14 @@ Technical JSON:
 - Optional diagnostic artifact controlled by settings.
 - Not the primary user-facing result.
 - Must not contain unnecessary personal data.
+
+## Extraction Pipeline
+
+The product pipeline is:
+
+`FileTypeDetector -> QuestionnaireExtractor -> Layout/Text/Table model -> Form4SectionParser -> Point-specific parsers -> ValidationPipeline -> Report/Summary/CandidateMessage`.
+
+DOCX, PDF, and DOC extractors all produce a normalized text stream and, where available, paragraph/table/page evidence. If extraction loses table boundaries or the PDF has no usable text layer, the application must create a manual-review issue rather than making confident false claims.
 
 ## Main Window
 

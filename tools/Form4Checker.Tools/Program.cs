@@ -5,7 +5,7 @@ using Form4Checker.Extraction;
 
 if (args.Length < 2)
 {
-    Console.WriteLine("Usage: Form4Checker.Tools extract-pdf <pdfPath> | parse-pdf <pdfPath> | parse-docx <docxPath> | validate-pdf <pdfPath> | validate-docx <docxPath>");
+    Console.WriteLine("Usage: Form4Checker.Tools extract-pdf <pdfPath> | parse-pdf <pdfPath> | parse-docx <docxPath> | parse-doc <docPath> | validate-pdf <pdfPath> | validate-docx <docxPath> | validate-doc <docPath>");
     return 2;
 }
 
@@ -49,6 +49,40 @@ if (command == "parse-docx")
     return 0;
 }
 
+if (command == "extract-doc")
+{
+    var parser = new Form4SectionParser(new Form4TableParser());
+    var extractor = new DocQuestionnaireExtractor(parser);
+    var questionnaire = await extractor.ExtractAsync(path, [], CancellationToken.None);
+    Console.WriteLine(questionnaire.FullText);
+    foreach (var warning in questionnaire.ExtractionWarnings)
+    {
+        Console.Error.WriteLine($"WARNING: {warning}");
+    }
+
+    return 0;
+}
+
+if (command == "parse-doc")
+{
+    var parser = new Form4SectionParser(new Form4TableParser());
+    var extractor = new DocQuestionnaireExtractor(parser);
+    var questionnaire = await extractor.ExtractAsync(path, [], CancellationToken.None);
+    foreach (var point in questionnaire.Points)
+    {
+        Console.WriteLine($"--- POINT {point.Number}: {point.Title} [{(point.IsMissing ? "missing" : "text")}] ---");
+        Console.WriteLine(point.Text.Length > 1600 ? point.Text[..1600] : point.Text);
+        Console.WriteLine();
+    }
+
+    foreach (var warning in questionnaire.ExtractionWarnings)
+    {
+        Console.Error.WriteLine($"WARNING: {warning}");
+    }
+
+    return 0;
+}
+
 if (command == "validate-pdf")
 {
     var text = await new PdfTextExtractor().ExtractTextAsync(path, CancellationToken.None);
@@ -75,6 +109,28 @@ if (command == "validate-docx")
 {
     var parser = new Form4SectionParser(new Form4TableParser());
     var extractor = new DocxQuestionnaireExtractor(parser);
+    var questionnaire = await extractor.ExtractAsync(path, [], CancellationToken.None);
+    var result = new Form4ValidationPipeline(new PersonalDataSummaryBuilder(), new CandidateMessageBuilder()).Validate(questionnaire);
+    foreach (var point in result.PointResults)
+    {
+        Console.WriteLine($"{point.PointNumber}. {point.PointTitle}: {DisplayText.PointStatus(point.Status)}");
+        foreach (var issue in point.Issues)
+        {
+            Console.WriteLine($"  - {DisplayText.Severity(issue.Severity)}: {issue.MessageForSpecialist}");
+            if (!string.IsNullOrWhiteSpace(issue.FoundValue))
+            {
+                Console.WriteLine($"    Найдено: {issue.FoundValue}");
+            }
+        }
+    }
+
+    return 0;
+}
+
+if (command == "validate-doc")
+{
+    var parser = new Form4SectionParser(new Form4TableParser());
+    var extractor = new DocQuestionnaireExtractor(parser);
     var questionnaire = await extractor.ExtractAsync(path, [], CancellationToken.None);
     var result = new Form4ValidationPipeline(new PersonalDataSummaryBuilder(), new CandidateMessageBuilder()).Validate(questionnaire);
     foreach (var point in result.PointResults)

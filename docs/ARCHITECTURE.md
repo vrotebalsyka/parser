@@ -25,11 +25,13 @@ tests/
 
 ```mermaid
 flowchart LR
-  A["Questionnaire DOCX/PDF"] --> B["File type validator"]
+  A["Questionnaire DOCX/PDF/DOC"] --> B["File type validator"]
   D["Attached documents"] --> B
   B --> C["Extractor"]
-  C --> E["Form 4 parser"]
-  E --> F["Validation pipeline"]
+  C --> L["Layout/Text/Table model"]
+  L --> E["Form 4 parser"]
+  E --> P["Point-specific parsers"]
+  P --> F["Validation pipeline"]
   F --> G["Personal data summary"]
   F --> H["Candidate message draft"]
   F --> I["DOCX report"]
@@ -45,7 +47,7 @@ Contains domain models, validation rules, deterministic validation pipeline, per
 
 ### Form4Checker.Extraction
 
-Reads DOCX through Open XML SDK and PDFs through a local text-layer extractor. Parses Form 4 sections and tables. Does not execute document content and does not use Office automation.
+Reads DOCX through Open XML SDK, PDFs through a local text-layer extractor, and Word 97-2003 DOC through local deterministic Compound File/WordDocument extraction. Parses Form 4 sections and tables. Does not execute document content and does not use Office automation or LibreOffice conversion.
 
 ### Form4Checker.Reporting
 
@@ -68,6 +70,7 @@ Inno Setup script and publishing profiles.
 - `IQuestionnaireExtractor`
 - `IDocxQuestionnaireExtractor`
 - `IPdfQuestionnaireExtractor`
+- `IDocQuestionnaireExtractor`
 - `IForm4SectionParser`
 - `IForm4TableParser`
 - `IValidationRule`
@@ -90,3 +93,6 @@ Inno Setup script and publishing profiles.
 - Rule version is read from `rules/form4.validation.yaml`.
 - Template detection distinguishes 21-point primary templates and 20-point legacy-compatible templates.
 
+## Extracted Document Model
+
+Extraction services produce a document-level model with raw text, pages, paragraphs, tables, layout blocks when available, and warnings. Validation evidence can point to file type, page, point, table, row, cell, raw value, normalized value, confidence, and extraction reason. Existing UI/reporting keeps using `CandidateQuestionnaire`, with the richer extraction model attached for diagnostics and future parser improvements.

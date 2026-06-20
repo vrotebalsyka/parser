@@ -1,21 +1,59 @@
 version: 0.1.0
 rules:
+  - id: extraction.warning
+    point: 0
+    severity: ManualReview
   - id: p01.fio.required
+    point: 1
+    severity: Error
+  - id: p01.fio.patronymic.missing
     point: 1
     severity: Error
   - id: p04.passport.series-number.required
     point: 4
     severity: Critical
+  - id: p04.passport.number.incomplete
+    point: 4
+    severity: Error
+  - id: p05.foreignPassport.contradiction
+    point: 5
+    severity: Error
+  - id: p05.foreignPassport.expiry.missing
+    point: 5
+    severity: Error
+  - id: p09.education.form.missing
+    point: 9
+    severity: Error
+  - id: p09.education.registrationNumber.missing
+    point: 9
+    severity: Error
   - id: p13.employment.gaps
+    point: 13
+    severity: Error
+  - id: p13.employment.period.reversed
+    point: 13
+    severity: Error
+  - id: p13.employment.period.overlap
     point: 13
     severity: Error
   - id: p14.relatives.required-fields
     point: 14
     severity: Error
+  - id: p16.residence.period.invalidMonth
+    point: 16
+    severity: Error
+  - id: p19.acknowledgement.negative
+    point: 19
+    severity: Error
+  - id: p20.falseInfo.blank
+    point: 20
+    severity: Error
+  - id: p21.consent.negative
+    point: 21
+    severity: Critical
   - id: p21.primary-template.required
     point: 21
     severity: Warning
 candidateMessage:
   greeting: "Здравствуйте. При проверке анкеты необходимо уточнить/исправить следующие пункты:"
   closing: "Просим внести исправления и направить обновлённую анкету."
-

@@ -25,9 +25,10 @@
 
 | Threat | Control |
 | --- | --- |
-| Malicious DOCX/PDF | Use parser libraries only; no macro execution; no Office automation; catch parser failures safely. |
+| Malicious DOCX/PDF/DOC | Use parser libraries/local deterministic readers only; no macro execution; no Office automation; no LibreOffice conversion; catch parser failures safely. |
 | Path traversal through file name | Sanitize generated file names; never combine untrusted file names directly into output paths. |
 | Zip bomb / oversized DOCX | Enforce file size limit and extracted text limit. |
+| Malicious Word 97-2003 OLE file | Require Compound File Binary signature and WordDocument stream; reject non-Word OLE files; never execute macros or embedded active content; fall back to manual-review warnings when extraction is weak. |
 | Oversized PDF / parser hang | Enforce file size, page count, extraction timeout, and extracted text limit. |
 | PII leakage in logs | Redact through `IPiiRedactor` before writing logs. |
 | PII leakage in temp files | Controlled temp directory; cleanup at startup, after session, and by user command. |
@@ -36,7 +37,7 @@
 | Accidental internet transmission | `INetworkGuard`; no runtime network clients; external AI disabled and locked. |
 | Prompt injection if LLM appears later | Treat extracted text as data; keep AI behind compile-time/feature flag default false. |
 | Form template substitution | Detect 21-point vs 20-point template and warn on legacy/unknown layout. |
-| Damaged PDF/DOCX | Safe user-facing errors; no crash; manual review where possible. |
+| Damaged PDF/DOCX/DOC | Safe user-facing errors; no crash; manual review where possible. |
 | Parser denial of service | File size, page count, text size, and timeout limits. |
 | Unsafe installer | Offline installer; no dependency downloads; code signing required before broad distribution. |
 | Supply-chain NuGet risk | Review packages, pin versions, prefer internal feed/cache for release builds. |
